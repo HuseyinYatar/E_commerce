@@ -4,21 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.eccommerce.orderservice.model.OrderItem;
 
 import java.math.BigDecimal;
-import java.util.List;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderResponse {
-    private Integer orderId;
+public class DtoOrderItem {
 
-    private Integer customerId;
 
-    private BigDecimal totalAmount;
+    private Integer productId;
 
-    private List<DtoOrderItem> items;
+    private BigDecimal fee;
 }

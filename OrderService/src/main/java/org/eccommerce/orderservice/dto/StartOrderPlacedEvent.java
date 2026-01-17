@@ -13,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderResponse {
+public class StartOrderPlacedEvent {
+
     private Integer orderId;
 
     private Integer customerId;
@@ -21,4 +22,5 @@ public class OrderResponse {
     private BigDecimal totalAmount;
 
     private List<DtoOrderItem> items;
+
 }

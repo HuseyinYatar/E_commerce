@@ -1,4 +1,4 @@
-package org.eccommerce.orderservice.dto;
+package org.eccommerce.cordinator.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class OrderItem {
-
-    private Integer customerId;
-
     private Integer productId;
 
     private BigDecimal fee;

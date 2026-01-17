@@ -1,26 +1,31 @@
-package org.eccommerce.orderservice.dto;
+package org.eccommerce.orderservice.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.eccommerce.orderservice.model.OrderItem;
-
+import java.util.*;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderPlacedEvent {
-
+@Entity
+@Table(name = "order_table")
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer orderId;
 
     private Integer customerId;
 
     private BigDecimal totalAmount;
 
+    @ElementCollection
+    @CollectionTable(name ="order_items",joinColumns= @JoinColumn(name = "order_id"))
     private List<OrderItem> items;
+
 
 }
