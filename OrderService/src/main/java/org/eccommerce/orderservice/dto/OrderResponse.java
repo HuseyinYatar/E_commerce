@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.eccommerce.orderservice.model.OrderItem;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,5 +19,5 @@ public class OrderResponse {
 
     private BigDecimal totalAmount;
 
-    private List<DtoOrderItem> items;
+    private List<OrdeItemDTO> items;
 }

@@ -1,6 +1,6 @@
 package org.eccommerce.orderservice.mapper;
 
-import org.eccommerce.orderservice.dto.DtoOrderItem;
+import org.eccommerce.orderservice.dto.OrdeItemDTO;
 import org.eccommerce.orderservice.dto.OrderResponse;
 import org.eccommerce.orderservice.dto.OrderSaveRequest;
 import org.eccommerce.orderservice.model.Order;
@@ -19,5 +19,5 @@ public interface OrderMapper {
 
     Order requestToEntity(OrderSaveRequest orderSaveRequest);
 
-    OrderItem dtoToEntity(DtoOrderItem dtoOrderItem);
+    OrderItem dtoToEntity(OrdeItemDTO ordeItemDTO);
 }
