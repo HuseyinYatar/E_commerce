@@ -34,7 +34,7 @@ public class OrderController {
         StartOrderPlacedEvent startOrderPlacedEvent = orderService.OrderPlace(orderSaveRequest);
 
         kafkaTemplate.send(orderCreated, startOrderPlacedEvent);
-        log.info("PlaceOrder event Started  orderId:{}", orderSaveRequest.getOrderId());
+        log.info("PlaceOrder event Started  orderId:{}", startOrderPlacedEvent.getOrderId());
         return "Order Placed";
     }
 

@@ -2,14 +2,14 @@ package org.eccommerce.orderservice.model;
 
 
 import jakarta.persistence.Embeddable;
+import lombok.Data;
 
-import java.math.BigDecimal;
-
+@Data
 @Embeddable
 public class OrderItem {
 
     private Integer productId;
 
-    private BigDecimal fee;
+    private Integer count;
 
 }
