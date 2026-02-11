@@ -17,8 +17,7 @@ public class KafkaConfig {
     private String orderCreated;
 
 
-    NewTopic placeOrderTopic()
-    {
+    NewTopic placeOrderTopic() {
         return TopicBuilder
                 .name(orderCreated)
                 .build();
@@ -26,8 +25,8 @@ public class KafkaConfig {
 
     @Value("${CHECK_INVENTORY}")
     private String checkInventory;
-    NewTopic checkInventory()
-    {
+
+    NewTopic checkInventory() {
         return TopicBuilder
                 .name(checkInventory)
                 .build();
@@ -35,8 +34,8 @@ public class KafkaConfig {
 
     @Value("${CHECKED_INVENTORY}")
     private String checkedInventory;
-    NewTopic checkedInventory()
-    {
+
+    NewTopic checkedInventory() {
         return TopicBuilder
                 .name(checkedInventory)
                 .build();
@@ -44,8 +43,8 @@ public class KafkaConfig {
 
     @Value("${START_PAYMENT}")
     private String startPaymentEvent;
-    NewTopic startPaymentEvent()
-    {
+
+    NewTopic startPaymentEvent() {
         return TopicBuilder
                 .name(startPaymentEvent)
                 .build();
@@ -53,16 +52,17 @@ public class KafkaConfig {
 
     @Value("${FINISHED_PAYMENT}")
     private String finishedPaymentEvent;
-    NewTopic finishedPaymentEvent()
-    {
+
+    NewTopic finishedPaymentEvent() {
         return TopicBuilder
                 .name(finishedPaymentEvent)
                 .build();
     }
+
     @Value("${FAILED_PAYMENT}")
     private String failedPayment;
-    NewTopic failedPayment()
-    {
+
+    NewTopic failedPayment() {
         return TopicBuilder
                 .name(failedPayment)
                 .build();

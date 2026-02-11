@@ -3,7 +3,6 @@ package org.ecommerce.paymentservice.producer;
 import lombok.extern.slf4j.Slf4j;
 import org.ecommerce.paymentservice.dto.FinishedPaymentEvent;
 import org.ecommerce.paymentservice.dto.PaymentFailedEvent;
-import org.ecommerce.paymentservice.exception.InsufficientBalance;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 

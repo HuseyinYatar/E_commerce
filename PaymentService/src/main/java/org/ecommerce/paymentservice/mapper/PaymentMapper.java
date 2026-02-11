@@ -3,7 +3,6 @@ package org.ecommerce.paymentservice.mapper;
 
 import org.ecommerce.paymentservice.dto.FinishedPaymentEvent;
 import org.ecommerce.paymentservice.dto.StartPaymentEvent;
-import org.ecommerce.paymentservice.model.Payment;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
