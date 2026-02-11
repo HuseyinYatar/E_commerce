@@ -29,6 +29,7 @@ public class InventoryConsumer {
         startCheckInventoryEvent.getOrderItemDTOS().forEach((i)->
                 log.info("The check Inventory Event recieved productId:{}",i.getProductId()));
         startCheckInventoryEvent.getOrderItemDTOS().forEach(inventoryService::checkInventoryStock);
+        inventoryService.checkedInventory(startCheckInventoryEvent);
     }
 
 }
