@@ -1,16 +1,16 @@
-package org.eccommerce.cordinator.dto;
+package org.eccommerce.cordinator.dto.PaymentService;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderItemDTO {
-    private Integer productId;
-    private Integer count;
+public class FinishedPaymentEvent {
+    private Integer orderId;
+
+    private Integer customerId;
 }

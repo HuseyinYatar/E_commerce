@@ -16,8 +16,7 @@ public class KafkaConfig {
     @Value("${ORDER_CREATED}")
     private String orderCreated;
 
-    @Value("${CHECK_INVENTORY}")
-    private String checkInventory;
+
     NewTopic placeOrderTopic()
     {
         return TopicBuilder
@@ -25,6 +24,8 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Value("${CHECK_INVENTORY}")
+    private String checkInventory;
     NewTopic checkInventory()
     {
         return TopicBuilder
@@ -32,6 +33,40 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Value("${CHECKED_INVENTORY}")
+    private String checkedInventory;
+    NewTopic checkedInventory()
+    {
+        return TopicBuilder
+                .name(checkedInventory)
+                .build();
+    }
+
+    @Value("${START_PAYMENT}")
+    private String startPaymentEvent;
+    NewTopic startPaymentEvent()
+    {
+        return TopicBuilder
+                .name(startPaymentEvent)
+                .build();
+    }
+
+    @Value("${FINISHED_PAYMENT}")
+    private String finishedPaymentEvent;
+    NewTopic finishedPaymentEvent()
+    {
+        return TopicBuilder
+                .name(finishedPaymentEvent)
+                .build();
+    }
+    @Value("${FAILED_PAYMENT}")
+    private String failedPayment;
+    NewTopic failedPayment()
+    {
+        return TopicBuilder
+                .name(failedPayment)
+                .build();
+    }
 
     KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> pf) {
         KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(pf);

@@ -3,8 +3,8 @@ package org.eccommerce.cordinator.mapper;
 
 import org.eccommerce.cordinator.dto.InventoryService.InventoryItemDTO;
 import org.eccommerce.cordinator.dto.InventoryService.StartCheckInventoryEvent;
-import org.eccommerce.cordinator.dto.OrderItemDTO;
-import org.eccommerce.cordinator.dto.StartOrderPlacedEvent;
+import org.eccommerce.cordinator.dto.OrderService.OrderItemDTO;
+import org.eccommerce.cordinator.dto.OrderService.StartOrderPlacedEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

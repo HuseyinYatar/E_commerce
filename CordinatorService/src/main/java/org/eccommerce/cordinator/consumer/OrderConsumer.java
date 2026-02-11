@@ -2,8 +2,8 @@ package org.eccommerce.cordinator.consumer;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.eccommerce.cordinator.Producer.OrderProducer;
-import org.eccommerce.cordinator.dto.StartOrderPlacedEvent;
+import org.eccommerce.cordinator.producer.OrderProducer;
+import org.eccommerce.cordinator.dto.OrderService.StartOrderPlacedEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 public class OrderConsumer {
 
     private final OrderProducer orderProducer;
-    //Topics
     private static final String PLACE_ORDER_TOPIC = "order-created";
 
     public OrderConsumer(OrderProducer orderProducer) {
