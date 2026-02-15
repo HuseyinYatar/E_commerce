@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class InventoryConsumer {
 
-    private static final String CHECKED_INVENTORY_TOPIC = "checked-inventory";
+    private static final String CHECKED_INVENTORY_TOPIC = "checked-inventoryItem";
     private final InventoryProducer inventoryProducer;
 
     public InventoryConsumer(InventoryProducer inventoryProducer) {

@@ -25,7 +25,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Long customerId;
+    private Integer customerId;
 
     private BigDecimal balance;
 

@@ -28,4 +28,8 @@ public class Order {
     private List<OrderItem> items;
 
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
+
 }

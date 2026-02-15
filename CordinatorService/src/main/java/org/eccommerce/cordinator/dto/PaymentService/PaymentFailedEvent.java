@@ -5,18 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class StartPaymentEvent {
+public class PaymentFailedEvent {
     private Integer orderId;
-
-    private Integer customerId;
-
-    private BigDecimal totalAmount;
+    private String errorMessage;
 }
 

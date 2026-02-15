@@ -29,7 +29,6 @@ public class PaymentProducer {
         PaymentFailedEvent failedEvent = new PaymentFailedEvent();
         failedEvent.setOrderId(orderId);
         failedEvent.setErrorMessage(ex.getMessage());
-
         kafkaTemplate.send(FAILED_PAYMENT_TOPIC, failedEvent);
     }
 }

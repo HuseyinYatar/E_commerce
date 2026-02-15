@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Integer> {
-    Optional<Payment> findFirstByCustomerIdOrderByTransactionTimestampDesc(Long customerId);
+    Optional<Payment> findFirstByCustomerIdOrderByTransactionTimestampDesc(Integer customerId);
 }
