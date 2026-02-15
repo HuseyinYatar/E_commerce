@@ -27,4 +27,9 @@ public class InventoryProducer {
     kafkaTemplate.send(checked_inventory,checkedInventoryEvent);
     log.info("The checked inventory event sent orderId:{}",checkedInventoryEvent.getOrderId());
     }
+
+    public void sendInventoryFailedEvent(Integer orderId, String message) {
+
+
+    }
 }

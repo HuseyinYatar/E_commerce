@@ -2,31 +2,56 @@ package org.ecommerce.inventoryservice.consumer;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.ecommerce.inventoryservice.dto.CheckedInventoryEvent;
+import org.ecommerce.inventoryservice.dto.InventoryReverseEvent;
 import org.ecommerce.inventoryservice.dto.StartCheckInventoryEvent;
+import org.ecommerce.inventoryservice.exception.InsufficientStockException;
+import org.ecommerce.inventoryservice.producer.InventoryProducer;
 import org.ecommerce.inventoryservice.service.InventoryService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component
 public class InventoryConsumer {
 
     private final InventoryService inventoryService;
-
+    private final InventoryProducer inventoryProducer;
     //TOPICS
-    private final static String CHECK_INVENTORY = "check-inventory";
+    private final static String CHECK_INVENTORY = "check-inventoryItem";
 
-    public InventoryConsumer(InventoryService inventoryService) {
+    private final static String INVENTORY_REVERSE = "inventoryItem-reverse";
+
+    public InventoryConsumer(InventoryService inventoryService, InventoryProducer inventoryProducer) {
         this.inventoryService = inventoryService;
+        this.inventoryProducer = inventoryProducer;
     }
 
 
     @KafkaListener(topics = {CHECK_INVENTORY}, groupId = "inventory-group")
-    private void consume(StartCheckInventoryEvent startCheckInventoryEvent) {
-        startCheckInventoryEvent.getOrderItemDTOS().forEach((i) ->
-                log.info("The check Inventory Event recieved productId:{}", i.getProductId()));
-        startCheckInventoryEvent.getOrderItemDTOS().forEach(inventoryService::checkInventoryStock);
-        inventoryService.checkedInventory(startCheckInventoryEvent);
+    public void consume(StartCheckInventoryEvent event) {
+        try {
+            inventoryService.processInventoryCheck(event);
+
+        } catch (InsufficientStockException e) {
+            log.warn("Order {} failed: {}", event.getOrderId(), e.getMessage());
+            // Tell Coordinator to start the rollback flow
+            inventoryProducer.sendInventoryFailedEvent(event.getOrderId(), e.getMessage());
+        } catch (Exception e) {
+            log.error("Technical error for Order {}: {}", event.getOrderId(), e.getMessage());
+        }
     }
 
+
+    @KafkaListener(topics = {INVENTORY_REVERSE}, groupId = "inventory-group")
+    private void rollback(InventoryReverseEvent inventoryReverseEvent) {
+        log.warn("Rollback triggered for Order ID: {}. Reason: {}",
+                inventoryReverseEvent.getOrderId(), inventoryReverseEvent.getErrorMessage());
+
+        // Logic to increase stock back to its original state
+        inventoryService.releaseInventory(inventoryReverseEvent.getOrderId());
+
+        log.info("Inventory successfully restored for Order ID: {}", inventoryReverseEvent.getOrderId());
+    }
 }
