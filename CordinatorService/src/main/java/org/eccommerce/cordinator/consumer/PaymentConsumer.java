@@ -3,36 +3,31 @@ package org.eccommerce.cordinator.consumer;
 import lombok.extern.slf4j.Slf4j;
 import org.eccommerce.cordinator.dto.PaymentService.FinishedPaymentEvent;
 import org.eccommerce.cordinator.dto.PaymentService.PaymentFailedEvent;
-import org.eccommerce.cordinator.producer.PaymentProducer;
+import org.eccommerce.cordinator.handler.PaymentSagaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+
 
 @Slf4j
 @Component
 public class PaymentConsumer {
 
-    private final static String FINISHED_TOPIC = "finished-payment";
+    private final PaymentSagaHandler paymentSagaHandler;
 
-    private static final String PAYMENT_FAILED = "failed-payment";
-
-    private final PaymentProducer paymentProducer;
-
-    public PaymentConsumer(PaymentProducer paymentProducer) {
-        this.paymentProducer = paymentProducer;
+    public PaymentConsumer(PaymentSagaHandler paymentSagaHandler) {
+        this.paymentSagaHandler = paymentSagaHandler;
     }
 
-    @KafkaListener(topics = FINISHED_TOPIC, groupId = "payment-group-v1")
-    public void consume(FinishedPaymentEvent event) {
-        log.info("Received FinishedPaymentEvent for Order ID: {} and Customer ID: {}",
-                event.getOrderId(), event.getCustomerId());
-
-        paymentProducer.orderCompleted(event);
+    @KafkaListener(topics = "${FINISHED_PAYMENT}", groupId = "payment-group-v1")
+    public void consumeSuccess(FinishedPaymentEvent event) {
+        log.info("Coordinator received Payment SUCCESS for Order: {}", event.getOrderId());
+        paymentSagaHandler.handlePaymentSuccess(event);
     }
 
-    @KafkaListener(topics = PAYMENT_FAILED, groupId = "payment-group-v1")
-    public void handlePaymentFailure(PaymentFailedEvent event) {
-        log.error("Payment failed for Order ID: {}. Reason: {}", event.getOrderId(), event.getErrorMessage());
-        paymentProducer.triggerPaymentFailureRollback(event);
-
+    @KafkaListener(topics = "${FAILED_PAYMENT}", groupId = "payment-group-v1")
+    public void consumeFailure(PaymentFailedEvent event) {
+        log.error("Coordinator received Payment FAILURE for Order: {}. Reason: {}",
+                event.getOrderId(), event.getErrorMessage());
+        paymentSagaHandler.handlePaymentFailure(event);
     }
 }

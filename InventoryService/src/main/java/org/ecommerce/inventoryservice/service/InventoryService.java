@@ -3,6 +3,7 @@ package org.ecommerce.inventoryservice.service;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.ecommerce.inventoryservice.dto.InventoryFailedEvent;
 import org.ecommerce.inventoryservice.dto.InventoryItemDTO;
 import org.ecommerce.inventoryservice.dto.StartCheckInventoryEvent;
 import org.ecommerce.inventoryservice.exception.InsufficientStockException;
@@ -65,7 +66,7 @@ public class InventoryService {
         }
     }
 
-    private void deductStockAndReserve(InventoryItemDTO item, Integer orderId) {
+    private void deductStockAndReserve(InventoryItemDTO item, Integer orderId)  {
         InventoryItem inventoryItem = inventoryRepository.findByProductIdAndCountGreaterThanEqual
                         (item.getProductId(), item.getCount())
                 .orElseThrow(() -> new InsufficientStockException("Out of stock: " + item.getProductId()));

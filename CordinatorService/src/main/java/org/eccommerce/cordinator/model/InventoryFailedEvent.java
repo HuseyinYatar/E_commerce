@@ -1,4 +1,4 @@
-package org.ecommerce.inventoryservice.service;
+package org.eccommerce.cordinator.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

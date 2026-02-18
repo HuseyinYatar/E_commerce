@@ -2,8 +2,8 @@ package org.eccommerce.cordinator.consumer;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.eccommerce.cordinator.producer.OrderProducer;
 import org.eccommerce.cordinator.dto.OrderService.StartOrderPlacedEvent;
+import org.eccommerce.cordinator.handler.OrderSagaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -11,20 +11,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrderConsumer {
 
-    private final OrderProducer orderProducer;
-    private static final String PLACE_ORDER_TOPIC = "order-created";
+    private final OrderSagaHandler orderSagaHandler;
 
-    public OrderConsumer(OrderProducer orderProducer) {
-        this.orderProducer = orderProducer;
+    public OrderConsumer(OrderSagaHandler orderSagaHandler) {
+        this.orderSagaHandler = orderSagaHandler;
     }
 
-
-    @KafkaListener(topics = {PLACE_ORDER_TOPIC}, groupId = "order-group")
-    private void checkInventory(StartOrderPlacedEvent startOrderPlacedEvent) {
-        log.info("The created order recieved orderId:{}", startOrderPlacedEvent.getOrderId());
-
-        orderProducer.startInventoryCheck(startOrderPlacedEvent);
+    @KafkaListener(topics = "${ORDER_CREATED}", groupId = "order-group")
+    public void consumeOrderCreated(StartOrderPlacedEvent event) {
+        log.info("Coordinator received Order Created Event: {}", event.getOrderId());
+        orderSagaHandler.handleOrderPlacement(event);
     }
-
-
 }
+
