@@ -17,34 +17,20 @@ import tools.jackson.databind.ObjectMapper;
 public class InventoryConsumer {
 
     private final InventoryService inventoryService;
-    private final InventoryProducer inventoryProducer;
-    //TOPICS
-    private final static String CHECK_INVENTORY = "check-inventoryItem";
 
-    private final static String INVENTORY_REVERSE = "inventoryItem-reverse";
-
-    public InventoryConsumer(InventoryService inventoryService, InventoryProducer inventoryProducer) {
+    public InventoryConsumer(InventoryService inventoryService) {
         this.inventoryService = inventoryService;
-        this.inventoryProducer = inventoryProducer;
     }
 
 
-    @KafkaListener(topics = {CHECK_INVENTORY}, groupId = "inventory-group")
+    @KafkaListener(topics = "${CHECKED_INVENTORY}", groupId = "inventory-group")
     public void consume(StartCheckInventoryEvent event) {
-        try {
-            inventoryService.processInventoryCheck(event);
-
-        } catch (InsufficientStockException e) {
-            log.warn("Order {} failed: {}", event.getOrderId(), e.getMessage());
-            // Tell Coordinator to start the rollback flow
-            inventoryProducer.sendInventoryFailedEvent(event.getOrderId(), e.getMessage());
-        } catch (Exception e) {
-            log.error("Technical error for Order {}: {}", event.getOrderId(), e.getMessage());
-        }
+        log.info("Received Inventory Check request for Order: {}", event.getOrderId());
+        inventoryService.processInventoryCheck(event);
     }
 
 
-    @KafkaListener(topics = {INVENTORY_REVERSE}, groupId = "inventory-group")
+    @KafkaListener(topics = "${INVENTORY_REVERSE}", groupId = "inventory-group")
     private void rollback(InventoryReverseEvent inventoryReverseEvent) {
         log.warn("Rollback triggered for Order ID: {}. Reason: {}",
                 inventoryReverseEvent.getOrderId(), inventoryReverseEvent.getErrorMessage());
