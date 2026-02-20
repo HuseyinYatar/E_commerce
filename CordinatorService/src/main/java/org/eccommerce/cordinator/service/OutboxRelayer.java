@@ -1,6 +1,7 @@
 package org.eccommerce.cordinator.service;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eccommerce.cordinator.model.OutboxMessage;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -13,20 +14,18 @@ import java.util.List;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class OutboxRelayer {
 
     private final OutboxRepository outboxRepository;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public OutboxRelayer(OutboxRepository outboxRepository, KafkaTemplate<String, String> kafkaTemplate) {
-        this.outboxRepository = outboxRepository;
-        this.kafkaTemplate = kafkaTemplate;
-    }
 
-    @Scheduled(fixedDelay = 2000) // Runs every 2 seconds
+    @Scheduled(fixedDelay = 2000L) // Runs every 2 seconds
     @Transactional
     public void relayMessages() {
         List<OutboxMessage> pendingMessages = outboxRepository.findAllByStatus(MessageStatus.PENDING);
+
 
         for (OutboxMessage message : pendingMessages) {
             try {

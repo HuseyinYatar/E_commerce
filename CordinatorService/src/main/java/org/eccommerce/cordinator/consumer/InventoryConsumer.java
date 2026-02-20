@@ -1,5 +1,6 @@
 package org.eccommerce.cordinator.consumer;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eccommerce.cordinator.dto.InventoryService.CheckedInventoryEvent;
 import org.eccommerce.cordinator.handler.InventorySagaHandler;
@@ -9,13 +10,10 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class InventoryConsumer {
 
     private final InventorySagaHandler inventorySagaHandler;
-
-    public InventoryConsumer(InventorySagaHandler inventorySagaHandler) {
-        this.inventorySagaHandler = inventorySagaHandler;
-    }
 
     /**
      * Listens for successful inventory reservations.
@@ -23,7 +21,6 @@ public class InventoryConsumer {
     @KafkaListener(topics = "${CHECKED_INVENTORY}", groupId = "inventory-group")
     public void consumeSuccess(CheckedInventoryEvent event) {
         log.info("Coordinator received SUCCESS: Inventory reserved for Order ID: {}", event.getOrderId());
-
         inventorySagaHandler.handleInventorySuccess(event);
     }
 
