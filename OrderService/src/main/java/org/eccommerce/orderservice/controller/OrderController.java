@@ -7,7 +7,6 @@ import org.eccommerce.orderservice.dto.OrderResponse;
 import org.eccommerce.orderservice.dto.OrderSaveRequest;
 import org.eccommerce.orderservice.dto.StartOrderPlacedEvent;
 import org.eccommerce.orderservice.service.OrderService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +36,7 @@ public class OrderController {
     }
 
     @PatchMapping("${CANCEL_ORDER_END_POINT}")
-    public String cancelOrder(@RequestParam Integer id)
-    {
+    public String cancelOrder(@RequestParam Integer id) {
         return orderService.cancelOrder(id);
     }
 }
