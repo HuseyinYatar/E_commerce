@@ -1,14 +1,15 @@
-package org.ecommerce.paymentservice.service;
+package org.eccommerce.orderservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ecommerce.paymentservice.model.OutboxMessage;
-import org.ecommerce.paymentservice.model.enums.MessageStatus;
-import org.ecommerce.paymentservice.repository.OutboxRepository;
+import org.eccommerce.orderservice.model.OutboxMessage;
+import org.eccommerce.orderservice.model.enums.MessageStatus;
+import org.eccommerce.orderservice.repository.OutboxRepository;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 @Component
 @Slf4j
@@ -31,7 +32,7 @@ public class OutboxRelayer {
                 outboxRepository.save(message);
                 log.info("Relayed message ID: {} to Kafka", message.getId());
             } catch (Exception e) {
-                log.error("Failed to relay message: {}", message.getId());
+                log.error("Failed to relay message: {}",e.getMessage());
                 message.setStatus(MessageStatus.FAILED); // Or retry logic
             }
         }

@@ -1,4 +1,4 @@
-package org.eccommerce.orderservice.model;
+package org.eccommerce.orderservice.model.enums;
 
 public enum OrderStatus {
     PENDING,

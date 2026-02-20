@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.eccommerce.orderservice.model.enums.OrderStatus;
+
 import java.util.*;
 import java.math.BigDecimal;
 

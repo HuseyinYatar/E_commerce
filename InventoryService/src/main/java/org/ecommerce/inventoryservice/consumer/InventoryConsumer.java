@@ -8,7 +8,6 @@ import org.ecommerce.inventoryservice.dto.StartCheckInventoryEvent;
 import org.ecommerce.inventoryservice.handler.InventorySagaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component

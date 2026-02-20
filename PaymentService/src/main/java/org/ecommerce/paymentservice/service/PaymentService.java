@@ -21,63 +21,35 @@ import java.time.LocalDateTime;
 @Slf4j
 @RequiredArgsConstructor
 public class PaymentService {
-    private final PaymentMapper paymentMapper;
     private final PaymentRepository paymentRepository;
-    private final OutboxService outboxService;
 
-
-    @Value("${FINISHED_PAYMENT}")
-    private String finishedPaymentTopic;
-
-    @Value("FAILED_PAYMENT")
-    private String failedPaymentTopic;
 
 
     @Transactional
-    public void deductBalance(StartPaymentEvent event) {
+    public void processBalanceDeduction(StartPaymentEvent event) {
         Integer customerId = event.getCustomerId();
         BigDecimal orderAmount = event.getTotalAmount();
-        Integer orderId = event.getOrderId();
 
-        log.info("Starting balance deduction | Customer: {} | Order: {} | Amount: {}",
-                customerId, orderId, orderAmount);
+        // 1. Retrieve current balance
+        Payment lastTransaction = paymentRepository
+                .findFirstByCustomerIdOrderByTransactionTimestampDesc(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found: " + customerId));
 
-        try {
-            Payment lastTransaction = paymentRepository
-                    .findFirstByCustomerIdOrderByTransactionTimestampDesc(customerId)
-                    .orElseThrow(() -> new CustomerNotFoundException("Customer account not found: " + customerId));
+        BigDecimal currentBalance = lastTransaction.getBalance();
 
-            BigDecimal currentBalance = lastTransaction.getBalance();
-
-            if (currentBalance.compareTo(orderAmount) < 0) {
-                throw new InsufficientBalanceException(
-                        String.format("Insufficient funds. Required: %s, Found: %s", orderAmount, currentBalance));
-            }
-
-            Payment newTransaction = new Payment();
-            newTransaction.setCustomerId(customerId);
-            newTransaction.setBalance(currentBalance.subtract(orderAmount));
-            newTransaction.setCurrency(lastTransaction.getCurrency());
-            newTransaction.setTransactionTimestamp(LocalDateTime.now());
-            paymentRepository.save(newTransaction);
-
-            FinishedPaymentEvent successEvent = paymentMapper.toFinishedEvent(event);
-            outboxService.saveToOutbox(finishedPaymentTopic, successEvent);
-
-            log.info("Payment successful for Order: {}. Staged to outbox.", orderId);
-
-        } catch (CustomerNotFoundException | InsufficientBalanceException e) {
-            log.warn("Business Failure for Order {}: {}", orderId, e.getMessage());
-
-            PaymentFailedEvent failedEvent = new PaymentFailedEvent(orderId, e.getMessage());
-            outboxService.saveToOutbox(failedPaymentTopic, failedEvent);
-
-        } catch (Exception e) {
-            log.error("Technical Critical Failure for Order {}: {}", orderId, e.getMessage(), e);
-
-            PaymentFailedEvent criticalFailure = new PaymentFailedEvent(orderId, "System technical error");
-            outboxService.saveToOutbox(failedPaymentTopic, criticalFailure);
+        // 2. Validate funds
+        if (currentBalance.compareTo(orderAmount) < 0) {
+            throw new InsufficientBalanceException("Insufficient funds.");
         }
+
+        // 3. Save new transaction record
+        Payment newTransaction = new Payment();
+        newTransaction.setCustomerId(customerId);
+        newTransaction.setBalance(currentBalance.subtract(orderAmount));
+        newTransaction.setCurrency(lastTransaction.getCurrency());
+        newTransaction.setTransactionTimestamp(LocalDateTime.now());
+
+        paymentRepository.save(newTransaction);
     }
 
 

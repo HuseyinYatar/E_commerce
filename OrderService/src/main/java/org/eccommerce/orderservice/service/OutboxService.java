@@ -1,10 +1,10 @@
-package org.ecommerce.paymentservice.service;
+package org.eccommerce.orderservice.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ecommerce.paymentservice.model.OutboxMessage;
-import org.ecommerce.paymentservice.model.enums.MessageStatus;
-import org.ecommerce.paymentservice.repository.OutboxRepository;
+import org.eccommerce.orderservice.model.OutboxMessage;
+import org.eccommerce.orderservice.model.enums.MessageStatus;
+import org.eccommerce.orderservice.repository.OutboxRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,6 @@ public class OutboxService {
     private final OutboxRepository outboxRepository;
     private final ObjectMapper objectMapper;
 
-
     /**
      * Common method to stage any event into the outbox.
      */
@@ -29,7 +28,6 @@ public class OutboxService {
     public void saveToOutbox(String topic, Object payload) {
         try {
             String jsonPayload = objectMapper.writeValueAsString(payload);
-
             OutboxMessage outbox = OutboxMessage.builder()
                     .topic(topic)
                     .payload(jsonPayload)
