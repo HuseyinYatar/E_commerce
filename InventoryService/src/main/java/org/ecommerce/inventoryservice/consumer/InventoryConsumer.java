@@ -16,7 +16,6 @@ import tools.jackson.databind.ObjectMapper;
 public class InventoryConsumer {
 
     private final InventorySagaHandler sagaHandler;
-    private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "${CHECK_INVENTORY}", groupId = "inventory-group")
     public void onCheckInventory(StartCheckInventoryEvent event) {  // receive as String
