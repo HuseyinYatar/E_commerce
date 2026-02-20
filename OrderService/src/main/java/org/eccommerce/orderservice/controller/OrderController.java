@@ -35,4 +35,10 @@ public class OrderController {
     public List<OrderResponse> getAllOrder() {
         return orderService.getAllOrder();
     }
+
+    @PatchMapping("${CANCEL_ORDER_END_POINT}")
+    public String cancelOrder(@RequestParam Integer id)
+    {
+        return orderService.cancelOrder(id);
+    }
 }

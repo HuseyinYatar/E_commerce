@@ -45,7 +45,7 @@ public class OrderService {
 
 
     @Transactional
-    public void cancelOrder(Integer orderId) {
+    public String cancelOrder(Integer orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
@@ -53,7 +53,7 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELLED);
 
         orderRepository.save(order);
-        log.info("Order {} status updated to CANCELLED", orderId);
+        return String.format( "Order %s status updated to CANCELLED", orderId);
     }
 
     public void updateOrderStatus(Integer orderId, boolean b) {
