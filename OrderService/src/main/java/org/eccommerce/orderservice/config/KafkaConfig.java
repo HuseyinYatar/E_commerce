@@ -12,6 +12,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Configuration
 public class KafkaConfig {
 
+   @Bean
     KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> pf) {
         KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(pf);
         kafkaTemplate.setObservationEnabled(true);
