@@ -6,18 +6,10 @@ import org.eccommerce.cordinator.dto.InventoryService.CheckedInventoryEvent;
 import org.eccommerce.cordinator.dto.OrderService.OrderCancelledEvent;
 import org.eccommerce.cordinator.mapper.InventoryMapper;
 import org.eccommerce.cordinator.model.InventoryFailedEvent;
-import org.eccommerce.cordinator.model.OutboxMessage;
-import org.eccommerce.cordinator.model.enums.MessageStatus;
-import org.eccommerce.cordinator.repository.OutboxRepository;
 import org.eccommerce.cordinator.service.OutboxService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -44,11 +36,12 @@ public class InventorySagaHandler {
 
         outboxService.saveToOutbox(paymentStartTopic, inventoryMapper.toStartPaymentEvent(event));
     }
+
     @Transactional
     public void handleInventoryFailure(InventoryFailedEvent event) {
         log.warn("Saga Step: Inventory Failed for Order {}. Starting Rollback.", event.getOrderId());
 
-      outboxService.saveToOutbox(orderCancelledTopic, new OrderCancelledEvent(event.getOrderId(), event.getErrorMessage()));
+        outboxService.saveToOutbox(orderCancelledTopic, new OrderCancelledEvent(event.getOrderId(), event.getErrorMessage()));
     }
 
 }
