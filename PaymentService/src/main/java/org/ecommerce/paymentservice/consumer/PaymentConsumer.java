@@ -7,7 +7,6 @@ import org.ecommerce.paymentservice.dto.StartPaymentEvent;
 import org.ecommerce.paymentservice.handler.PaymentSagaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.ObjectMapper;
 
 @Slf4j
 @Component
