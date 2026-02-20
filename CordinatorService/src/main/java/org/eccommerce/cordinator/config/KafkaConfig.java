@@ -3,10 +3,14 @@ package org.eccommerce.cordinator.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.converter.JacksonJsonMessageConverter;
+import org.springframework.kafka.support.converter.RecordMessageConverter;
+import tools.jackson.databind.json.JsonMapper;
 
 @Configuration
 public class KafkaConfig {
@@ -50,7 +54,7 @@ public class KafkaConfig {
                 .build();
     }
 
-    @Value("${FINISHED_PAYMENT}")
+    @Value("${FINISH_PAYMENT}")
     private String finishedPaymentEvent;
 
     NewTopic finishedPaymentEvent() {
@@ -59,7 +63,7 @@ public class KafkaConfig {
                 .build();
     }
 
-    @Value("${FAILED_PAYMENT}")
+    @Value("${FAIL_PAYMENT}")
     private String failedPayment;
 
     NewTopic failedPayment() {
@@ -68,11 +72,17 @@ public class KafkaConfig {
                 .build();
     }
 
-    KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> pf) {
-        KafkaTemplate<String, Object> kafkaTemplate = new KafkaTemplate<>(pf);
+    KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> pf) {
+        KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(pf);
         kafkaTemplate.setObservationEnabled(true);
         return kafkaTemplate;
     }
 
-
+    @Bean
+    public RecordMessageConverter smartConverter(JsonMapper jsonMapper) {
+        return new JacksonJsonMessageConverter(jsonMapper);
+    }
 }
+
+
+

@@ -18,13 +18,13 @@ public class PaymentConsumer {
         this.paymentSagaHandler = paymentSagaHandler;
     }
 
-    @KafkaListener(topics = "${FINISHED_PAYMENT}", groupId = "payment-group-v1")
+    @KafkaListener(topics = "${FINISH_PAYMENT}", groupId = "payment-group-v1")
     public void consumeSuccess(FinishedPaymentEvent event) {
         log.info("Coordinator received Payment SUCCESS for Order: {}", event.getOrderId());
         paymentSagaHandler.handlePaymentSuccess(event);
     }
 
-    @KafkaListener(topics = "${FAILED_PAYMENT}", groupId = "payment-group-v1")
+    @KafkaListener(topics = "${FAIL_PAYMENT}", groupId = "payment-group-v1")
     public void consumeFailure(PaymentFailedEvent event) {
         log.error("Coordinator received Payment FAILURE for Order: {}. Reason: {}",
                 event.getOrderId(), event.getErrorMessage());

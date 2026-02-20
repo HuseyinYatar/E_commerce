@@ -26,10 +26,10 @@ public class InventorySagaHandler {
     private final OutboxService outboxService;
     private final InventoryMapper inventoryMapper;
     // Topics for the next steps
-    @Value("${PAYMENT_START_TOPIC}")
+    @Value("${START_PAYMENT}")
     private String paymentStartTopic;
 
-    @Value("${ORDER_CANCELLED_TOPIC}")
+    @Value("${ORDER_CANCELLED}")
     private String orderCancelledTopic;
 
     public InventorySagaHandler(OutboxService outboxService, InventoryMapper inventoryMapper) {
@@ -40,7 +40,7 @@ public class InventorySagaHandler {
 
     @Transactional
     public void handleInventorySuccess(CheckedInventoryEvent event) {
-        log.info("Saga Step: Inventory Reserved for Order {}. Moving to Payment.", event.getOrderId());
+        log.info("Saga Step: Inventory reduction for Order {}. Moving to Payment.", event.getOrderId());
 
         outboxService.saveToOutbox(paymentStartTopic, inventoryMapper.toStartPaymentEvent(event));
     }
