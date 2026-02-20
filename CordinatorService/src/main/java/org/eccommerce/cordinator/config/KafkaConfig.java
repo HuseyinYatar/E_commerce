@@ -21,6 +21,7 @@ public class KafkaConfig {
     private String orderCreated;
 
 
+    @Bean
     NewTopic placeOrderTopic() {
         return TopicBuilder
                 .name(orderCreated)
@@ -30,6 +31,7 @@ public class KafkaConfig {
     @Value("${CHECK_INVENTORY}")
     private String checkInventory;
 
+    @Bean
     NewTopic checkInventory() {
         return TopicBuilder
                 .name(checkInventory)
@@ -39,6 +41,7 @@ public class KafkaConfig {
     @Value("${CHECKED_INVENTORY}")
     private String checkedInventory;
 
+    @Bean
     NewTopic checkedInventory() {
         return TopicBuilder
                 .name(checkedInventory)
@@ -57,6 +60,7 @@ public class KafkaConfig {
     @Value("${FINISH_PAYMENT}")
     private String finishedPaymentEvent;
 
+    @Bean
     NewTopic finishedPaymentEvent() {
         return TopicBuilder
                 .name(finishedPaymentEvent)
@@ -66,12 +70,16 @@ public class KafkaConfig {
     @Value("${FAIL_PAYMENT}")
     private String failedPayment;
 
+    @Bean
     NewTopic failedPayment() {
         return TopicBuilder
                 .name(failedPayment)
                 .build();
     }
 
+
+
+    @Bean
     KafkaTemplate<String, String> kafkaTemplate(ProducerFactory<String, String> pf) {
         KafkaTemplate<String, String> kafkaTemplate = new KafkaTemplate<>(pf);
         kafkaTemplate.setObservationEnabled(true);
