@@ -51,6 +51,7 @@ public class KafkaConfig {
     @Value("${START_PAYMENT}")
     private String startPaymentEvent;
 
+    @Bean
     NewTopic startPaymentEvent() {
         return TopicBuilder
                 .name(startPaymentEvent)
