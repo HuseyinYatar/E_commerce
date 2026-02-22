@@ -1,4 +1,4 @@
-package org.eccommerce.cordinator.consumer;
+package org.eccommerce.orderservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PaymentFailedEvent {
+public class OrderCompletedEvent {
     private Integer orderId;
-    private String errorMessage;
-}
 
+    private Integer customerId;
+}

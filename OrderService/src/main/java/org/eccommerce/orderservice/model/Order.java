@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.eccommerce.orderservice.model.enums.OrderStatus;
+
 import java.util.*;
 import java.math.BigDecimal;
 
@@ -26,6 +28,10 @@ public class Order {
     @ElementCollection
     @CollectionTable(name ="order_items",joinColumns= @JoinColumn(name = "order_id"))
     private List<OrderItem> items;
+
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
 
 }

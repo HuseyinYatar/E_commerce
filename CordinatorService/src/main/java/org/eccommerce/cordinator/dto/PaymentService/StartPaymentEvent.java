@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class StartPaymentEvent {
-
     private Integer orderId;
 
     private Integer customerId;

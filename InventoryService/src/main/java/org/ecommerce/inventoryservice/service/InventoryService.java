@@ -1,55 +1,56 @@
 package org.ecommerce.inventoryservice.service;
 
-
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ecommerce.inventoryservice.dto.CheckedInventoryEvent;
 import org.ecommerce.inventoryservice.dto.InventoryItemDTO;
 import org.ecommerce.inventoryservice.dto.StartCheckInventoryEvent;
 import org.ecommerce.inventoryservice.exception.InsufficientStockException;
-import org.ecommerce.inventoryservice.mapper.InventoryMapper;
-import org.ecommerce.inventoryservice.model.Inventory;
-import org.ecommerce.inventoryservice.producer.InventoryProducer;
+import org.ecommerce.inventoryservice.model.InventoryItem;
+import org.ecommerce.inventoryservice.model.InventoryReservation;
 import org.ecommerce.inventoryservice.repository.InventoryRepository;
+import org.ecommerce.inventoryservice.repository.InventoryReservationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
-    private final InventoryProducer inventoryProducer;
-    private final InventoryMapper inventoryMapper;
+    private final InventoryReservationRepository inventoryReservationRepository;
 
-    public InventoryService(InventoryRepository inventoryRepository, InventoryProducer inventoryProducer, InventoryMapper inventoryMapper) {
-        this.inventoryRepository = inventoryRepository;
-        this.inventoryProducer = inventoryProducer;
-        this.inventoryMapper = inventoryMapper;
+    @Transactional
+    public void deductStockForOrder(StartCheckInventoryEvent event) {
+        for (InventoryItemDTO item : event.getOrderItemDTOS()) {
+
+            InventoryItem inventoryItem = inventoryRepository
+                    .findByProductIdAndCountGreaterThanEqual(item.getProductId(), item.getCount())
+                    .orElseThrow(() -> new InsufficientStockException("Out of stock: " + item.getProductId()));
+
+            inventoryItem.setCount(inventoryItem.getCount() - item.getCount());
+            InventoryReservation reservation = InventoryReservation.builder()
+                    .orderId(event.getOrderId())
+                    .productId(item.getProductId())
+                    .quantity(item.getCount())
+                    .build();
+            inventoryReservationRepository.save(reservation);
+            log.info("The inventory item stock reduction completed ProductId:{}",item.getProductId());
+
+        }
     }
 
     @Transactional
-    public void checkInventoryStock(InventoryItemDTO startCheckInventoryEvent) {
-        Inventory inventory = inventoryRepository.findByProductIdAndCountGreaterThanEqual(
-                startCheckInventoryEvent.getProductId(),
-                startCheckInventoryEvent.getCount()
-        ).orElseThrow(()
-                -> new InsufficientStockException(
-                String.format("The stock is insufficient. Requested: %d, Product ID: %d",
-                        startCheckInventoryEvent.getCount(),
-                        startCheckInventoryEvent.getProductId())
-        ));
+    public void releaseInventory(Integer orderId) {
+        List<InventoryReservation> reservations = inventoryReservationRepository.findAllByOrderId(orderId);
 
-        //If the Stock is enough than reduce it
-        inventory.setCount(inventory.getCount() - startCheckInventoryEvent.getCount());
-        inventoryRepository.save(inventory);
+        if (reservations.isEmpty()) return;
 
-
-
-    }
-    public void checkedInventory(StartCheckInventoryEvent startCheckInventoryEvent)
-    {
-        CheckedInventoryEvent inventoryEvent=inventoryMapper.startEvenToCheckedEvent(startCheckInventoryEvent);
-        inventoryProducer.checkedMessageSuccessfully(inventoryEvent);
-
+        for (InventoryReservation reservation : reservations) {
+            inventoryRepository.increaseStock(reservation.getProductId(), reservation.getQuantity());
+        }
+        inventoryReservationRepository.deleteByOrderId(orderId);
     }
 }

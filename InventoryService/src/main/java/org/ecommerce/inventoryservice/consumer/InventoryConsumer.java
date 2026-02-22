@@ -1,32 +1,44 @@
 package org.ecommerce.inventoryservice.consumer;
 
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ecommerce.inventoryservice.dto.InventoryFailedEvent;
 import org.ecommerce.inventoryservice.dto.StartCheckInventoryEvent;
-import org.ecommerce.inventoryservice.service.InventoryService;
+import org.ecommerce.inventoryservice.handler.InventorySagaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class InventoryConsumer {
 
-    private final InventoryService inventoryService;
+    private final InventorySagaHandler sagaHandler;
 
-    //TOPICS
-    private final static String CHECK_INVENTORY = "check-inventory";
-
-    public InventoryConsumer(InventoryService inventoryService) {
-        this.inventoryService = inventoryService;
+    @KafkaListener(topics = "${CHECK_INVENTORY}", groupId = "inventory-group")
+    public void onCheckInventory(StartCheckInventoryEvent event) {  // receive as String
+        try {
+            log.info("Received inventory check for Order: {}", event.getOrderId());
+            sagaHandler.handleCheckInventory(event);
+        } catch (Exception e) {
+            log.error("Failed to deserialize inventory event: {}", e.getMessage(), e);
+            throw new RuntimeException("Deserialization failed", e); // triggers retry/DLT if configured
+        }
     }
 
 
-    @KafkaListener(topics = {CHECK_INVENTORY}, groupId = "inventory-group")
-    private void consume(StartCheckInventoryEvent startCheckInventoryEvent) {
-        startCheckInventoryEvent.getOrderItemDTOS().forEach((i) ->
-                log.info("The check Inventory Event recieved productId:{}", i.getProductId()));
-        startCheckInventoryEvent.getOrderItemDTOS().forEach(inventoryService::checkInventoryStock);
-        inventoryService.checkedInventory(startCheckInventoryEvent);
+    @KafkaListener(topics = "${INVENTORY_REVERSE}", groupId = "inventory-group")
+    public void onRollbackInventory(InventoryFailedEvent event) {
+        try {
+            log.info("Received rollback request for Order: {}", event.getOrderId());
+            sagaHandler.handleRollback(event);
+        } catch (Exception e) {
+            log.error("Failed to process inventory rollback for Order {}: {}",
+                    event.getOrderId(), e.getMessage(), e);
+            throw new RuntimeException("Rollback processing failed", e);
+        }
     }
+
 
 }
