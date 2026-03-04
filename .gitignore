@@ -1,0 +1,12 @@
+**/.idea/
+target/
+*.class
+*.log
+.DS_Store
+# Ignore Postgres data folders
+CordinatorService/postgresql/*
+
+# Ignore your local logs (since they are already in ELK)
+logs/*.log
+### DATABASE ###
+/postgresql

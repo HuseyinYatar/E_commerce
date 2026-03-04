@@ -17,7 +17,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
-
+    @GetMapping("/api/order/health")
+    public String health() {
+        return "Order Service is UP";
+    }
 
     @PostMapping("${ORDER_PLACE}")
     public String placeOrder(@RequestBody OrderSaveRequest orderSaveRequest) {

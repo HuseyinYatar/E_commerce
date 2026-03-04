@@ -16,7 +16,7 @@ public class OrderConsumer {
     private final OrderSagaHandler orderSagaHandler;
 
 
-    @KafkaListener(topics = "${ORDER_CREATED}", groupId = "order-group")
+    @KafkaListener(topics = "${ORDER_CREATED}", groupId = "order-group-v1")
     public void consumeOrderCreated(StartOrderPlacedEvent event) {
         log.info("Coordinator received Order Created Event: {}", event.getOrderId());
         orderSagaHandler.handleOrderPlacement(event);
