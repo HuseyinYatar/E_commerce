@@ -35,7 +35,9 @@ The Saga Orchestrator coordinates distributed transactions. If any step fails, t
 
 <a name="happy-path-sequence"></a>
 <details>
-<summary><h3>2.1 Happy Path Sequence (Click to expand)</h3></summary>
+<summary><h3>2.1 Happy Path Sequence (Click to expand)</h3>
+<img src="saga-flows-images/happy_path.png" width=800 height=600>
+</summary>
 
 
 The standard successful transaction flow consists of 8 steps:
@@ -54,7 +56,9 @@ The standard successful transaction flow consists of 8 steps:
 
 <a name="inventory-failure"></a>
 <details>
-<summary><h3>2.2 Compensating Transaction: Inventory Failure (Click to expand)</h3></summary>
+<summary><h3>2.2 Compensating Transaction: Inventory Failure (Click to expand)</h3>
+<img src="saga-flows-images/inventory_crashed.png" width=800 height=600>
+</summary>
 
 
 When the inventory check fails, the system performs an immediate rollback:
@@ -69,7 +73,9 @@ When the inventory check fails, the system performs an immediate rollback:
 
 <a name="payment-failure"></a>
 <details>
-<summary><h3>2.3 Compensating Transaction: Payment Failure (Click to expand)</h3></summary>
+<summary><h3>2.3 Compensating Transaction: Payment Failure (Click to expand)</h3>
+<img src="saga-flows-images/payment_crashed.png" width=800 height=600>
+   </summary>
 
 
 If payment fails after inventory is reserved, a full reversal is required:
