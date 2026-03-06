@@ -12,7 +12,9 @@
 
 <a name="architectural-design"></a>
 <details>
-<summary><h2>1. Architectural Design (Click to expand)</h2></summary>
+<summary><h2>1. Architectural Design (Click to expand)</h2>
+<img src="saga-flows-images/architectural_design.png" width=800 height=600>
+</summary>
 
 The system is built on a **Microservices Architecture** utilizing the **Orchestration-based Saga Pattern** coupled with the **Transactional Outbox Pattern**. A central **Coordinator Service** manages the lifecycle of distributed transactions across the Order, Inventory, and Payment services.
 
